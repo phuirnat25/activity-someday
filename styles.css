@@ -125,3 +125,91 @@ button:hover {
     margin-bottom: 10px;
     color: #333;
 }
+
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #74ebd5, #ACB6E5); /* การไล่สีพื้นหลัง */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+h1 {
+    color: #fff;
+    font-size: 42px;
+    font-weight: 700;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* เงาของตัวอักษร */
+}
+
+.dashboard-container {
+    max-width: 800px;
+    width: 90%;
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* เงาของกล่อง */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 20px;
+    text-align: left;
+    font-size: 18px;
+}
+
+table th {
+    background-color: #007bff;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 10px 10px 0 0; /* ทำให้มุมกลม */
+}
+
+table tbody tr {
+    border-bottom: 1px solid #ddd; /* เส้นแบ่งระหว่างแถว */
+}
+
+table tbody tr:last-child {
+    border-bottom: none; /* ไม่มีเส้นแบ่งในแถวสุดท้าย */
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+table td {
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    table th, table td {
+        padding: 15px;
+        font-size: 16px;
+    }
+}
+

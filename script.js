@@ -28,38 +28,107 @@ function saveHistory(inputId, newTime) {
     historyItem.textContent = `${formattedTime}`;
     historyContainer.insertBefore(historyItem, historyContainer.firstChild);
 
-    const history = JSON.parse(localStorage.getItem('history')) || [];
-    history.push({ inputId, newTime });
-    localStorage.setItem('history', JSON.stringify(history));
-}
-
-function getLastTimeFromHistory(inputId) {
-    const history = JSON.parse(localStorage.getItem('history')) || [];
-    for (let i = history.length - 1; i >= 0; i--) {
-        if (history[i].inputId === inputId) {
-            return history[i].newTime;
-        }
-    }
-    return null;
-}
-
-function loadHistory() {
-    const history = JSON.parse(localStorage.getItem('history')) || [];
-
-    history.forEach(item => {
-        const historyContainer = document.getElementById(`${item.inputId}-history`);
-        const historyItem = document.createElement('div');
-        historyItem.className = 'history-item';
-        const formattedTime = formatTimeToAMPM(item.newTime);
-        historyItem.textContent = `${formattedTime}`;
-        historyContainer.insertBefore(historyItem, historyContainer.firstChild);
+    const historyRef = firebase.database().ref('history/' + inputId);
+    historyRef.push({
+        inputId: inputId,
+        newTime: newTime
     });
 }
 
+function getLastTimeFromHistory(inputId) {
+    // This function is no longer needed for localStorage, but you can adapt it for Firebase if necessary
+    return null;
+}
+
+function loadDefaultTimes() {
+    return [
+        { activity: "Capture Flag", time: "11:00 AM" },
+        { activity: "Airdrop", time: "03:00 PM" },
+        { activity: "Capture Flag", time: "05:00 PM" },
+        { activity: "Airdrop", time: "09:00 PM" },
+        { activity: "Capture Flag", time: "10:30 PM" }
+    ];
+}
+
+function loadHistoryFromFirebase() {
+    const historyRef = firebase.database().ref('history');
+    historyRef.on('value', (snapshot) => {
+        const historyData = snapshot.val();
+        if (historyData) {
+            Object.keys(historyData).forEach(inputId => {
+                const historyContainer = document.getElementById(`${inputId}-history`);
+                historyContainer.innerHTML = ''; // ล้างข้อมูลเก่า
+                Object.values(historyData[inputId]).forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    const formattedTime = formatTimeToAMPM(item.newTime);
+                    historyItem.textContent = `${formattedTime}`;
+                    historyContainer.insertBefore(historyItem, historyContainer.firstChild);
+                });
+            });
+        }
+    });
+}
+
+function loadDashboardFromFirebase() {
+    const historyRef = firebase.database().ref('history');
+    historyRef.once('value', (snapshot) => {
+        const historyData = snapshot.val();
+        let allTimes = loadDefaultTimes(); // เริ่มต้นด้วยข้อมูล Default
+
+        if (historyData) {
+            const lastTimes = {};
+
+            Object.keys(historyData).forEach(inputId => {
+                let latestTime = '';
+                Object.values(historyData[inputId]).forEach(item => {
+                    if (!latestTime || latestTime < item.newTime) {
+                        latestTime = item.newTime;
+                    }
+                });
+                lastTimes[inputId] = latestTime;
+            });
+
+            // แปลงข้อมูลจาก Firebase เป็นรูปแบบเดียวกับข้อมูล Default
+            const firebaseTimes = Object.entries(lastTimes).map(([inputId, time]) => {
+                const activity = inputId.charAt(0).toUpperCase() + inputId.slice(1).replace('-', ' ');
+                return { activity, time: formatTimeToAMPM(time) };
+            });
+
+            // รวมข้อมูล Firebase กับข้อมูล Default
+            allTimes = allTimes.concat(firebaseTimes);
+        }
+
+        // จัดเรียงข้อมูลทั้งหมดตามเวลา
+        allTimes.sort((a, b) => {
+            const timeA = parseTime(a.time);
+            const timeB = parseTime(b.time);
+            return timeA - timeB;
+        });
+
+        // แสดงข้อมูลในตาราง
+        const tbody = document.querySelector('#history-table tbody');
+        tbody.innerHTML = ''; // ล้างข้อมูลเก่า
+
+        allTimes.forEach(({ activity, time }) => {
+            const row = document.createElement('tr');
+            const activityCell = document.createElement('td');
+            activityCell.textContent = activity;
+
+            const timeCell = document.createElement('td');
+            timeCell.textContent = time;
+
+            row.appendChild(activityCell);
+            row.appendChild(timeCell);
+
+            tbody.appendChild(row);
+        });
+    });
+}
+
+
 function clearHistory(inputId) {
-    let history = JSON.parse(localStorage.getItem('history')) || [];
-    history = history.filter(item => item.inputId !== inputId);
-    localStorage.setItem('history', JSON.stringify(history));
+    firebase.database().ref('history/' + inputId).remove();
 
     const historyContainer = document.getElementById(`${inputId}-history`);
     historyContainer.innerHTML = '';
@@ -72,4 +141,19 @@ function formatTimeToAMPM(time) {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${period}`;
 }
 
-window.onload = loadHistory;
+function parseTime(timeStr) {
+    const [time, modifier] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+
+    if (modifier === 'PM' && hours !== 12) {
+        hours += 12;
+    } else if (modifier === 'AM' && hours === 12) {
+        hours = 0;
+    }
+
+    return hours * 60 + minutes;
+}
+
+window.onload = function() {
+    loadDashboardFromFirebase();
+};

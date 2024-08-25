@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="dashboard-header">
+        <h1>Activity Dashboard</h1>
+    </div>
+    <div class="dashboard-container">
+        <table id="history-table">
+            <thead>
+                <tr>
+                    <th>Activity</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- รายการเวลาจะถูกเพิ่มที่นี่โดย script.js -->
+            </tbody>
+        </table>
+    </div>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtZQ4r7WxSFg35DGhrygCMY7qwLIzsUdw",
+            authDomain: "someday-activity.firebaseapp.com",
+            databaseURL: "https://someday-activity-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "someday-activity",
+            storageBucket: "someday-activity.appspot.com",
+            messagingSenderId: "971946504221",
+            appId: "1:971946504221:web:139f27f45429e2fca6d6f4"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        loadDashboardFromFirebase(); // โหลดข้อมูลจาก Firebase
+    </script>
+</body>
+
+</html>
