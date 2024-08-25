@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Someday By Zac Family</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Activity Someday By Zac Family</h1>
+    <div class="main-container">
+        <div class="input-container">
+            <div class="form-group">
+                <label for="cement">Cement</label>
+                <input type="time" id="cement" name="cement">
+                <button onclick="addSeconds('cement', 5400)">Next Loop Cement</button>
+            </div>
+            <div class="form-group">
+                <label for="oil">Oil</label>
+                <input type="time" id="oil" name="oil">
+                <button onclick="addSeconds('oil', 6500)">Next Loop Oil</button>
+            </div>
+            <div class="form-group">
+                <label for="ten-point">10 Point</label>
+                <input type="time" id="ten-point" name="ten-point">
+                <button onclick="addSeconds('ten-point', 6000)">Next Loop 10 Point</button>
+            </div>
+        </div>
+        <div class="history-columns">
+            <div class="history-container">
+                <h3>Cement History</h3>
+                <button class="clear-button" onclick="clearHistory('cement')">×</button>
+                <div id="cement-history"></div>
+            </div>
+            <div class="history-container">
+                <h3>Oil History</h3>
+                <button class="clear-button" onclick="clearHistory('oil')">×</button>
+                <div id="oil-history"></div>
+            </div>
+            <div class="history-container">
+                <h3>10 Point History</h3>
+                <button class="clear-button" onclick="clearHistory('ten-point')">×</button>
+                <div id="ten-point-history"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
