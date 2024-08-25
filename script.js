@@ -10,9 +10,9 @@ function addSeconds(inputId, secondsToAdd) {
         }
     }
 
-    let [time, period] = currentTime.split(' ');
+    const [time, period] = currentTime.split(' ');
     let [hours, minutes] = time.split(':').map(Number);
-
+    
     if (period.toUpperCase() === 'PM' && hours !== 12) hours += 12;
     if (period.toUpperCase() === 'AM' && hours === 12) hours = 0;
 
@@ -20,10 +20,9 @@ function addSeconds(inputId, secondsToAdd) {
 
     let newHours = Math.floor(totalSeconds / 3600) % 24;
     let newMinutes = Math.floor(totalSeconds % 3600 / 60);
-    let newPeriod = newHours >= 12 ? 'PM' : 'AM';
 
-    if (newHours > 12) newHours -= 12;
-    if (newHours === 0) newHours = 12;
+    const newPeriod = newHours >= 12 ? 'PM' : 'AM';
+    newHours = newHours % 12 || 12;
 
     input.value = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')} ${newPeriod}`;
     saveHistory(inputId, input.value);
@@ -70,6 +69,25 @@ function clearHistory(inputId) {
 
     const historyContainer = document.getElementById(`${inputId}-history`);
     historyContainer.innerHTML = '';
+}
+
+function formatTimeToAMPM(time) {
+    let [hours, minutes] = time.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${period}`;
+}
+
+function showTimePicker(inputId) {
+    const input = document.getElementById(inputId);
+    input.type = 'time';
+    input.step = '60'; // Step to allow selecting minutes
+    input.onblur = function() {
+        const [hours, minutes] = input.value.split(':');
+        let formattedTime = formatTimeToAMPM(`${hours}:${minutes}`);
+        input.value = formattedTime;
+        input.type = 'text'; // Switch back to text type after selection
+    };
 }
 
 window.onload = loadHistory;
