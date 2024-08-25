@@ -10,21 +10,13 @@ function addSeconds(inputId, secondsToAdd) {
         }
     }
 
-    const [time, period] = currentTime.split(' ');
-    let [hours, minutes] = time.split(':').map(Number);
-    
-    if (period.toUpperCase() === 'PM' && hours !== 12) hours += 12;
-    if (period.toUpperCase() === 'AM' && hours === 12) hours = 0;
-
+    const [hours, minutes] = currentTime.split(':').map(Number);
     const totalSeconds = (hours * 3600) + (minutes * 60) + secondsToAdd;
 
-    let newHours = Math.floor(totalSeconds / 3600) % 24;
-    let newMinutes = Math.floor(totalSeconds % 3600 / 60);
+    const newHours = Math.floor(totalSeconds / 3600) % 24;
+    const newMinutes = Math.floor(totalSeconds % 3600 / 60);
 
-    const newPeriod = newHours >= 12 ? 'PM' : 'AM';
-    newHours = newHours % 12 || 12;
-
-    input.value = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')} ${newPeriod}`;
+    input.value = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
     saveHistory(inputId, input.value);
 }
 
@@ -32,7 +24,8 @@ function saveHistory(inputId, newTime) {
     const historyContainer = document.getElementById(`${inputId}-history`);
     const historyItem = document.createElement('div');
     historyItem.className = 'history-item';
-    historyItem.textContent = `${newTime}`;
+    const formattedTime = formatTimeToAMPM(newTime);
+    historyItem.textContent = `${formattedTime}`;
     historyContainer.insertBefore(historyItem, historyContainer.firstChild);
 
     const history = JSON.parse(localStorage.getItem('history')) || [];
@@ -57,7 +50,8 @@ function loadHistory() {
         const historyContainer = document.getElementById(`${item.inputId}-history`);
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
-        historyItem.textContent = `${item.newTime}`;
+        const formattedTime = formatTimeToAMPM(item.newTime);
+        historyItem.textContent = `${formattedTime}`;
         historyContainer.insertBefore(historyItem, historyContainer.firstChild);
     });
 }
@@ -76,18 +70,6 @@ function formatTimeToAMPM(time) {
     const period = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${period}`;
-}
-
-function showTimePicker(inputId) {
-    const input = document.getElementById(inputId);
-    input.type = 'time';
-    input.step = '60'; // Step to allow selecting minutes
-    input.onblur = function() {
-        const [hours, minutes] = input.value.split(':');
-        let formattedTime = formatTimeToAMPM(`${hours}:${minutes}`);
-        input.value = formattedTime;
-        input.type = 'text'; // Switch back to text type after selection
-    };
 }
 
 window.onload = loadHistory;
