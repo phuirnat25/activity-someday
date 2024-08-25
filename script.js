@@ -10,13 +10,22 @@ function addSeconds(inputId, secondsToAdd) {
         }
     }
 
-    const [hours, minutes] = currentTime.split(':').map(Number);
+    let [time, period] = currentTime.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+
+    if (period.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+    if (period.toUpperCase() === 'AM' && hours === 12) hours = 0;
+
     const totalSeconds = (hours * 3600) + (minutes * 60) + secondsToAdd;
 
-    const newHours = Math.floor(totalSeconds / 3600) % 24;
-    const newMinutes = Math.floor(totalSeconds % 3600 / 60);
+    let newHours = Math.floor(totalSeconds / 3600) % 24;
+    let newMinutes = Math.floor(totalSeconds % 3600 / 60);
+    let newPeriod = newHours >= 12 ? 'PM' : 'AM';
 
-    input.value = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+    if (newHours > 12) newHours -= 12;
+    if (newHours === 0) newHours = 12;
+
+    input.value = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')} ${newPeriod}`;
     saveHistory(inputId, input.value);
 }
 
@@ -24,8 +33,7 @@ function saveHistory(inputId, newTime) {
     const historyContainer = document.getElementById(`${inputId}-history`);
     const historyItem = document.createElement('div');
     historyItem.className = 'history-item';
-    const formattedTime = formatTimeToAMPM(newTime);
-    historyItem.textContent = `${formattedTime}`;
+    historyItem.textContent = `${newTime}`;
     historyContainer.insertBefore(historyItem, historyContainer.firstChild);
 
     const history = JSON.parse(localStorage.getItem('history')) || [];
@@ -50,8 +58,7 @@ function loadHistory() {
         const historyContainer = document.getElementById(`${item.inputId}-history`);
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
-        const formattedTime = formatTimeToAMPM(item.newTime);
-        historyItem.textContent = `${formattedTime}`;
+        historyItem.textContent = `${item.newTime}`;
         historyContainer.insertBefore(historyItem, historyContainer.firstChild);
     });
 }
@@ -63,13 +70,6 @@ function clearHistory(inputId) {
 
     const historyContainer = document.getElementById(`${inputId}-history`);
     historyContainer.innerHTML = '';
-}
-
-function formatTimeToAMPM(time) {
-    let [hours, minutes] = time.split(':').map(Number);
-    const period = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${period}`;
 }
 
 window.onload = loadHistory;
