@@ -42,12 +42,18 @@ function getLastTimeFromHistory(inputId) {
 
 function loadDefaultTimes() {
     return [
+
         { activity: "Capture Flag", time: "01:00 AM" },
         { activity: "Capture Flag", time: "11:00 AM" },
+        { activity: "Electrical Repair", time: "11:30 AM" },
         { activity: "Airdrop", time: "03:00 PM" },
+        { activity: "Electrical Repair", time: "03:30 PM" },
         { activity: "Capture Flag", time: "05:00 PM" },
+        { activity: "Electrical Repair", time: "05:30 PM" },
+        { activity: "Electrical Repair", time: "07:30 PM" },
         { activity: "Airdrop", time: "09:00 PM" },
-        { activity: "Capture Flag", time: "10:30 PM" }
+        { activity: "Capture Flag", time: "10:30 PM" },
+        { activity: "Electrical Repair", time: "11:30 PM" }
     ];
 }
 
@@ -73,7 +79,7 @@ function loadHistoryFromFirebase() {
 
 function loadDashboardFromFirebase() {
     const historyRef = firebase.database().ref('history');
-    historyRef.on('value', (snapshot) => {  // เปลี่ยนจาก once เป็น on เพื่อรับข้อมูลแบบ realtime
+    historyRef.on('value', (snapshot) => {
         const historyData = snapshot.val();
         let allTimes = loadDefaultTimes(); // เริ่มต้นด้วยข้อมูล Default
 
@@ -90,30 +96,29 @@ function loadDashboardFromFirebase() {
                 lastTimes[inputId] = latestTime;
             });
 
-            // แปลงข้อมูลจาก Firebase เป็นรูปแบบเดียวกับข้อมูล Default
             const firebaseTimes = Object.entries(lastTimes).map(([inputId, time]) => {
                 const activity = inputId.charAt(0).toUpperCase() + inputId.slice(1).replace('-', ' ');
                 return { activity, time: formatTimeToAMPM(time) };
             });
 
-            // รวมข้อมูล Firebase กับข้อมูล Default
             allTimes = allTimes.concat(firebaseTimes);
         }
 
-        // จัดเรียงข้อมูลทั้งหมดตามเวลา
         allTimes.sort((a, b) => {
             const timeA = parseTime(a.time);
             const timeB = parseTime(b.time);
             return timeA - timeB;
         });
 
-        // แสดงข้อมูลในตาราง
         const tbody = document.querySelector('#history-table tbody');
-        tbody.innerHTML = ''; // ล้างข้อมูลเก่า
+        tbody.innerHTML = '';
+
+        let closestTimeDiff = Infinity;
+        let closestActivity = null;
 
         allTimes.forEach(({ activity, time }) => {
             const row = document.createElement('tr');
-            row.classList.add('time-row'); // เพิ่มคลาสให้กับทุกแถวสำหรับการอัพเดท Realtime
+            row.classList.add('time-row');
             const activityCell = document.createElement('td');
             activityCell.textContent = activity;
 
@@ -124,13 +129,42 @@ function loadDashboardFromFirebase() {
             row.appendChild(timeCell);
 
             tbody.appendChild(row);
+
+            const now = new Date();
+            const nowMinutes = now.getHours() * 60 + now.getMinutes();
+            const rowMinutes = parseTime(time);
+
+            if (rowMinutes >= nowMinutes) {
+                const timeDiff = rowMinutes - nowMinutes;
+                if (timeDiff < closestTimeDiff) {
+                    closestTimeDiff = timeDiff;
+                    closestActivity = { activity, time };
+                }
+            }
         });
 
-        // เรียกฟังก์ชันสำหรับการอัพเดท Highlight แบบ Realtime
+        if (closestActivity) {
+            document.getElementById('upcoming-activity-name').textContent = closestActivity.activity;
+            document.getElementById('upcoming-activity-time').textContent = closestActivity.time;
+            document.getElementById('upcoming-activity-img').src = getActivityImage(closestActivity.activity);
+        }
+
         updateHighlightRealtime();
     });
 }
 
+function getActivityImage(activity) {
+    const images = {
+        "Capture Flag": "images/capture-flag.png",
+        "Airdrop": "images/airdrop.png",
+        "Cement": "images/cement.png",
+        "Oil": "images/oil_rig_on_land.png",
+        "Ten Point": "images/ten-point.png",
+        "Electrical Repair": "images/electrical_repair.png",
+        // เพิ่มรูปอื่นๆ ตามความต้องการ
+    };
+    return images[activity] || "images/default.png";
+}
 
 function clearHistory(inputId) {
     firebase.database().ref('history/' + inputId).remove();
@@ -180,12 +214,10 @@ function updateHighlightRealtime() {
             }
         });
 
-        // ลบ Highlight จากแถวเก่า
         document.querySelectorAll('.highlight-upcoming').forEach(row => {
             row.classList.remove('highlight-upcoming');
         });
 
-        // เพิ่ม Highlight ให้กับแถวใหม่
         if (closestRow) {
             closestRow.classList.add('highlight-upcoming');
         }

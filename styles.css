@@ -126,18 +126,59 @@ button:hover {
     color: #333;
 }
 
+/* Upcoming Activity Box */
+.upcoming-activity-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.activity-box {
+    background-color: #fff;
+    padding: 20px;
+    width: 80%;
+    max-width: 1000px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border: 3px solid #007bff;
+}
+
+#upcoming-activity-img {
+    width: 480px;
+    height: 320px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+#upcoming-activity-name {
+    font-size: 60px;
+    font-weight: 700;
+    margin: 0;
+    color: #007bff;
+}
+
+#upcoming-activity-time {
+    font-size: 42px;
+    margin: 5px 0 0 0;
+    font-weight: 600;
+    color: #333;
+}
+
 /* Global Styles */
 body {
     font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #74ebd5, #ACB6E5); /* การไล่สีพื้นหลัง */
+    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* เพื่อให้การเลื่อนของ Animation ดูเรียบร้อย */
 }
 
 .dashboard-header {
@@ -149,18 +190,18 @@ h1 {
     color: #fff;
     font-size: 42px;
     font-weight: 700;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* เงาของตัวอักษร */
-    animation: fadeIn 2s ease-in-out; /* Animation ให้หัวข้อจางเข้ามา */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 2s ease-in-out;
 }
 
 .dashboard-container {
-    max-width: 800px;
     width: 90%;
+    max-width: 800px;
     background: #fff;
     border-radius: 15px;
     padding: 30px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* เงาของกล่อง */
-    animation: slideIn 1s ease-in-out; /* Animation เลื่อนเข้ามา */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    animation: slideIn 1s ease-in-out;
 }
 
 @keyframes slideIn {
@@ -191,7 +232,7 @@ table {
 
 table th, table td {
     padding: 20px;
-    text-align: center; /* จัดข้อความตรงกลางทั้งในหัวข้อและเซลล์ */
+    text-align: center;
     font-size: 18px;
 }
 
@@ -201,15 +242,15 @@ table th {
     text-transform: uppercase;
     letter-spacing: 1px;
     border: none;
-    border-radius: 10px 10px 0 0; /* ทำให้มุมกลม */
+    border-radius: 10px 10px 0 0;
 }
 
 table tbody tr {
-    border-bottom: 1px solid #ddd; /* เส้นแบ่งระหว่างแถว */
+    border-bottom: 1px solid #ddd;
 }
 
 table tbody tr:last-child {
-    border-bottom: none; /* ไม่มีเส้นแบ่งในแถวสุดท้าย */
+    border-bottom: none;
 }
 
 table tbody tr:nth-child(even) {
@@ -226,16 +267,15 @@ table td {
 }
 
 table td:first-child {
-    border-right: 2px solid #ddd; /* เพิ่มเส้นแบ่งระหว่างคอลัมน์ Activity กับ Time */
+    border-right: 2px solid #ddd;
 }
 
 .highlight-upcoming {
-    background-color: #d4edda; /* สีเขียวอ่อนสำหรับ Highlight ทั้งแถว */
+    background-color: #d4edda;
     color: #155724;
     font-weight: bold;
 }
 
-/* เพิ่ม Highlight ครอบคลุมทั้งแถว */
 .highlight-upcoming td {
     background-color: #d4edda;
     color: #155724;
@@ -251,4 +291,23 @@ table td:first-child {
         padding: 15px;
         font-size: 16px;
     }
+    
+    .upcoming-activity-container {
+        padding: 20px;
+    }
+    
+    #upcoming-activity-img {
+        width: 60px;
+        height: 60px;
+        margin-right: 10px;
+    }
+
+    #upcoming-activity-name {
+        font-size: 24px;
+    }
+
+    #upcoming-activity-time {
+        font-size: 20px;
+    }
 }
+
