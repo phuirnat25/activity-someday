@@ -137,6 +137,7 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 0;
+    overflow: hidden; /* เพื่อให้การเลื่อนของ Animation ดูเรียบร้อย */
 }
 
 .dashboard-header {
@@ -149,6 +150,7 @@ h1 {
     font-size: 42px;
     font-weight: 700;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* เงาของตัวอักษร */
+    animation: fadeIn 2s ease-in-out; /* Animation ให้หัวข้อจางเข้ามา */
 }
 
 .dashboard-container {
@@ -158,6 +160,27 @@ h1 {
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* เงาของกล่อง */
+    animation: slideIn 1s ease-in-out; /* Animation เลื่อนเข้ามา */
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 table {
@@ -168,7 +191,7 @@ table {
 
 table th, table td {
     padding: 20px;
-    text-align: left;
+    text-align: center; /* จัดข้อความตรงกลางทั้งในหัวข้อและเซลล์ */
     font-size: 18px;
 }
 
@@ -199,6 +222,23 @@ table tbody tr:hover {
 
 table td {
     color: #333;
+    padding: 20px;
+}
+
+table td:first-child {
+    border-right: 2px solid #ddd; /* เพิ่มเส้นแบ่งระหว่างคอลัมน์ Activity กับ Time */
+}
+
+.highlight-upcoming {
+    background-color: #d4edda; /* สีเขียวอ่อนสำหรับ Highlight ทั้งแถว */
+    color: #155724;
+    font-weight: bold;
+}
+
+/* เพิ่ม Highlight ครอบคลุมทั้งแถว */
+.highlight-upcoming td {
+    background-color: #d4edda;
+    color: #155724;
 }
 
 /* Responsive Design */
@@ -212,4 +252,3 @@ table td {
         font-size: 16px;
     }
 }
-

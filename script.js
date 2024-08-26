@@ -42,6 +42,7 @@ function getLastTimeFromHistory(inputId) {
 
 function loadDefaultTimes() {
     return [
+        { activity: "Capture Flag", time: "01:00 AM" },
         { activity: "Capture Flag", time: "11:00 AM" },
         { activity: "Airdrop", time: "03:00 PM" },
         { activity: "Capture Flag", time: "05:00 PM" },
@@ -110,6 +111,10 @@ function loadDashboardFromFirebase() {
         const tbody = document.querySelector('#history-table tbody');
         tbody.innerHTML = ''; // ล้างข้อมูลเก่า
 
+        const now = new Date();
+        let closestTimeDiff = Infinity;
+        let closestTimeRow = null;
+
         allTimes.forEach(({ activity, time }) => {
             const row = document.createElement('tr');
             const activityCell = document.createElement('td');
@@ -118,11 +123,23 @@ function loadDashboardFromFirebase() {
             const timeCell = document.createElement('td');
             timeCell.textContent = time;
 
+            // คำนวณเวลาปัจจุบัน
+            const timeDiff = Math.abs(parseTime(time) - (now.getHours() * 60 + now.getMinutes()));
+            if (timeDiff < closestTimeDiff && parseTime(time) >= (now.getHours() * 60 + now.getMinutes())) {
+                closestTimeDiff = timeDiff;
+                closestTimeRow = timeCell;
+            }
+
             row.appendChild(activityCell);
             row.appendChild(timeCell);
 
             tbody.appendChild(row);
         });
+
+        // Highlight ช่องเวลาที่กำลังจะถึง
+        if (closestTimeRow) {
+            closestTimeRow.classList.add('highlight-upcoming');
+        }
     });
 }
 
