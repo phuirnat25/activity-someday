@@ -143,12 +143,14 @@ function loadDashboardFromFirebase() {
             }
         });
 
+        // อัพเดทข้อมูลใน Activity Box
         if (closestActivity) {
             document.getElementById('upcoming-activity-name').textContent = closestActivity.activity;
             document.getElementById('upcoming-activity-time').textContent = closestActivity.time;
             document.getElementById('upcoming-activity-img').src = getActivityImage(closestActivity.activity);
         }
 
+        // อัพเดท Highlight ในตารางแบบ Realtime
         updateHighlightRealtime();
     });
 }
