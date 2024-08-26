@@ -159,7 +159,7 @@ function getActivityImage(activity) {
         "Airdrop": "images/airdrop.png",
         "Cement": "images/cement.png",
         "Oil": "images/oil_rig_on_land.png",
-        "Ten Point": "images/ten-point.png",
+        "Ten point": "images/ten-point.png",
         "Electrical Repair": "images/electrical_repair.png",
         // เพิ่มรูปอื่นๆ ตามความต้องการ
     };
