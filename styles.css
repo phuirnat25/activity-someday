@@ -137,15 +137,33 @@ button:hover {
 
 .activity-box {
     background-color: #fff;
+    background-color: #fff;
+    padding: 20px;
     padding: 20px;
     width: 80%;
+    width: 80%;
     max-width: 1000px;
+    max-width: 800px;
+    border-radius: 15px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
     display: flex;
     align-items: center;
+    align-items: center;
+    justify-content: flex-start;
     justify-content: flex-start;
     border: 3px solid #007bff;
+    border: 3px solid #007bff;
+    opacity: 0; /* เริ่มต้นที่โปร่งใส */
+    transform: translateX(-100%); /* เริ่มต้นที่อยู่นอกจอทางซ้าย */
+    transition: opacity 1s ease-out, transform 1s ease-out; /* เพิ่ม Transition */
+}
+
+.activity-box.fade-in {
+    opacity: 1; /* ทำให้ปรากฏ */
+    transform: translateX(0); /* เลื่อนเข้ามาที่ตำแหน่งเดิม */
 }
 
 #upcoming-activity-img {
@@ -172,7 +190,12 @@ button:hover {
 /* Global Styles */
 body {
     font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+    /* background: linear-gradient(135deg, #74ebd5, #ACB6E5); */
+    background-image: url('images/background.png');
+    background-size: cover; /* ทำให้ภาพครอบคลุมทั้งหน้าจอ */
+    background-position: center; /* จัดตำแหน่งภาพให้อยู่ตรงกลาง */
+    background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
+    background-attachment: fixed;
     margin: 0;
     padding: 0;
     display: flex;
@@ -202,6 +225,7 @@ h1 {
     padding: 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     animation: slideIn 1s ease-in-out;
+    border: 3px solid #007bff;
 }
 
 @keyframes slideIn {
@@ -227,7 +251,7 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 table th, table td {

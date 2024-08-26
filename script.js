@@ -113,9 +113,6 @@ function loadDashboardFromFirebase() {
         const tbody = document.querySelector('#history-table tbody');
         tbody.innerHTML = '';
 
-        let closestTimeDiff = Infinity;
-        let closestActivity = null;
-
         allTimes.forEach(({ activity, time }) => {
             const row = document.createElement('tr');
             row.classList.add('time-row');
@@ -129,31 +126,14 @@ function loadDashboardFromFirebase() {
             row.appendChild(timeCell);
 
             tbody.appendChild(row);
-
-            const now = new Date();
-            const nowMinutes = now.getHours() * 60 + now.getMinutes();
-            const rowMinutes = parseTime(time);
-
-            if (rowMinutes >= nowMinutes) {
-                const timeDiff = rowMinutes - nowMinutes;
-                if (timeDiff < closestTimeDiff) {
-                    closestTimeDiff = timeDiff;
-                    closestActivity = { activity, time };
-                }
-            }
         });
 
-        // อัพเดทข้อมูลใน Activity Box
-        if (closestActivity) {
-            document.getElementById('upcoming-activity-name').textContent = closestActivity.activity;
-            document.getElementById('upcoming-activity-time').textContent = closestActivity.time;
-            document.getElementById('upcoming-activity-img').src = getActivityImage(closestActivity.activity);
-        }
-
-        // อัพเดท Highlight ในตารางแบบ Realtime
+        // เรียกฟังก์ชันอัพเดททันทีหลังจากโหลดข้อมูลเสร็จ
+        highlightClosestActivity();
         updateHighlightRealtime();
     });
 }
+
 
 function getActivityImage(activity) {
     const images = {
@@ -196,34 +176,60 @@ function parseTime(timeStr) {
 }
 
 function updateHighlightRealtime() {
-    setInterval(() => {
-        const now = new Date();
-        const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    setInterval(highlightClosestActivity, 1000); // อัพเดททุกๆ 1 วินาที
+}
 
-        let closestTimeDiff = Infinity;
-        let closestRow = null;
+function highlightClosestActivity() {
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-        document.querySelectorAll('.time-row').forEach(row => {
-            const timeText = row.children[1].textContent;
-            const rowMinutes = parseTime(timeText);
+    let closestTimeDiff = Infinity;
+    let closestRow = null;
+    let closestActivity = null;
 
-            if (rowMinutes >= nowMinutes) {
-                const timeDiff = rowMinutes - nowMinutes;
-                if (timeDiff < closestTimeDiff) {
-                    closestTimeDiff = timeDiff;
-                    closestRow = row;
-                }
+    document.querySelectorAll('.time-row').forEach(row => {
+        const timeText = row.children[1].textContent;
+        const rowMinutes = parseTime(timeText);
+
+        if (rowMinutes >= nowMinutes) {
+            const timeDiff = rowMinutes - nowMinutes;
+            if (timeDiff < closestTimeDiff) {
+                closestTimeDiff = timeDiff;
+                closestRow = row;
+                closestActivity = {
+                    activity: row.children[0].textContent,
+                    time: timeText
+                };
             }
-        });
-
-        document.querySelectorAll('.highlight-upcoming').forEach(row => {
-            row.classList.remove('highlight-upcoming');
-        });
-
-        if (closestRow) {
-            closestRow.classList.add('highlight-upcoming');
         }
-    }, 1000); // อัพเดททุกๆ 1 วินาที
+    });
+
+    // ลบ Highlight จากแถวเก่า
+    document.querySelectorAll('.highlight-upcoming').forEach(row => {
+        row.classList.remove('highlight-upcoming');
+    });
+
+    // เพิ่ม Highlight ให้กับแถวใหม่
+    if (closestRow) {
+        closestRow.classList.add('highlight-upcoming');
+    }
+
+    // อัพเดท Activity Box พร้อม Animation เมื่อข้อมูลเปลี่ยนแปลง
+    if (closestActivity) {
+        const currentActivity = document.getElementById('upcoming-activity-name').textContent;
+        const currentTime = document.getElementById('upcoming-activity-time').textContent;
+
+        if (closestActivity.activity !== currentActivity || closestActivity.time !== currentTime) {
+            const activityBox = document.getElementById('upcoming-activity');
+            activityBox.classList.remove('fade-in'); // รีเซ็ต Animation ก่อน
+            setTimeout(() => {
+                document.getElementById('upcoming-activity-name').textContent = closestActivity.activity;
+                document.getElementById('upcoming-activity-time').textContent = closestActivity.time;
+                document.getElementById('upcoming-activity-img').src = getActivityImage(closestActivity.activity);
+                activityBox.classList.add('fade-in'); // เพิ่ม Animation ใหม่
+            }, 100); // หน่วงเวลาเล็กน้อยก่อนเริ่ม Animation
+        }
+    }
 }
 
 window.onload = function() {
