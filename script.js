@@ -73,7 +73,7 @@ function loadHistoryFromFirebase() {
 
 function loadDashboardFromFirebase() {
     const historyRef = firebase.database().ref('history');
-    historyRef.once('value', (snapshot) => {
+    historyRef.on('value', (snapshot) => {  // เปลี่ยนจาก once เป็น on เพื่อรับข้อมูลแบบ realtime
         const historyData = snapshot.val();
         let allTimes = loadDefaultTimes(); // เริ่มต้นด้วยข้อมูล Default
 
@@ -111,24 +111,14 @@ function loadDashboardFromFirebase() {
         const tbody = document.querySelector('#history-table tbody');
         tbody.innerHTML = ''; // ล้างข้อมูลเก่า
 
-        const now = new Date();
-        let closestTimeDiff = Infinity;
-        let closestTimeRow = null;
-
         allTimes.forEach(({ activity, time }) => {
             const row = document.createElement('tr');
+            row.classList.add('time-row'); // เพิ่มคลาสให้กับทุกแถวสำหรับการอัพเดท Realtime
             const activityCell = document.createElement('td');
             activityCell.textContent = activity;
 
             const timeCell = document.createElement('td');
             timeCell.textContent = time;
-
-            // คำนวณเวลาปัจจุบัน
-            const timeDiff = Math.abs(parseTime(time) - (now.getHours() * 60 + now.getMinutes()));
-            if (timeDiff < closestTimeDiff && parseTime(time) >= (now.getHours() * 60 + now.getMinutes())) {
-                closestTimeDiff = timeDiff;
-                closestTimeRow = timeCell;
-            }
 
             row.appendChild(activityCell);
             row.appendChild(timeCell);
@@ -136,10 +126,8 @@ function loadDashboardFromFirebase() {
             tbody.appendChild(row);
         });
 
-        // Highlight ช่องเวลาที่กำลังจะถึง
-        if (closestTimeRow) {
-            closestTimeRow.classList.add('highlight-upcoming');
-        }
+        // เรียกฟังก์ชันสำหรับการอัพเดท Highlight แบบ Realtime
+        updateHighlightRealtime();
     });
 }
 
@@ -169,6 +157,39 @@ function parseTime(timeStr) {
     }
 
     return hours * 60 + minutes;
+}
+
+function updateHighlightRealtime() {
+    setInterval(() => {
+        const now = new Date();
+        const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+        let closestTimeDiff = Infinity;
+        let closestRow = null;
+
+        document.querySelectorAll('.time-row').forEach(row => {
+            const timeText = row.children[1].textContent;
+            const rowMinutes = parseTime(timeText);
+
+            if (rowMinutes >= nowMinutes) {
+                const timeDiff = rowMinutes - nowMinutes;
+                if (timeDiff < closestTimeDiff) {
+                    closestTimeDiff = timeDiff;
+                    closestRow = row;
+                }
+            }
+        });
+
+        // ลบ Highlight จากแถวเก่า
+        document.querySelectorAll('.highlight-upcoming').forEach(row => {
+            row.classList.remove('highlight-upcoming');
+        });
+
+        // เพิ่ม Highlight ให้กับแถวใหม่
+        if (closestRow) {
+            closestRow.classList.add('highlight-upcoming');
+        }
+    }, 1000); // อัพเดททุกๆ 1 วินาที
 }
 
 window.onload = function() {
