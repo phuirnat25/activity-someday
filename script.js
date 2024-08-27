@@ -1,13 +1,16 @@
-function addSeconds(inputId, secondsToAdd) {
+function addSeconds(inputId, userSecondsToAdd, defaultSecondsToAdd) {
     const input = document.getElementById(inputId);
     let currentTime = input.value;
 
+    // ถ้า userSecondsToAdd ไม่ได้ระบุ ให้ใช้ค่า default
+    const secondsToAdd = userSecondsToAdd ? parseInt(userSecondsToAdd, 10) : defaultSecondsToAdd;
+
+    // หากไม่ระบุเวลาใน input ให้ใช้เวลาปัจจุบัน
     if (!currentTime) {
-        currentTime = getLastTimeFromHistory(inputId);
-        if (!currentTime) {
-            alert('Please set a time first.');
-            return;
-        }
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        currentTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
 
     const [hours, minutes] = currentTime.split(':').map(Number);
@@ -150,7 +153,6 @@ function getActivityImage(activity) {
 
 function clearHistory(inputId) {
     firebase.database().ref('history/' + inputId).remove();
-
     const historyContainer = document.getElementById(`${inputId}-history`);
     historyContainer.innerHTML = '';
 }

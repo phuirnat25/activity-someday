@@ -15,17 +15,23 @@
             <div class="form-group">
                 <label for="cement">Cement</label>
                 <input type="time" id="cement" name="cement">
-                <button onclick="addSeconds('cement', 5400)">Next Loop Cement</button>
+                <label for="cement-seconds">Seconds to Add</label>
+                <input type="number" id="cement-seconds" name="cement-seconds" placeholder="Default: 5400">
+                <button onclick="addSeconds('cement', document.getElementById('cement-seconds').value, 5400)">Next Loop Cement</button>
             </div>
             <div class="form-group">
                 <label for="oil">Oil</label>
                 <input type="time" id="oil" name="oil">
-                <button onclick="addSeconds('oil', 6500)">Next Loop Oil</button>
+                <label for="oil-seconds">Seconds to Add</label>
+                <input type="number" id="oil-seconds" name="oil-seconds" placeholder="Default: 6500">
+                <button onclick="addSeconds('oil', document.getElementById('oil-seconds').value, 6500)">Next Loop Oil</button>
             </div>
             <div class="form-group">
                 <label for="ten-point">10 Point</label>
                 <input type="time" id="ten-point" name="ten-point">
-                <button onclick="addSeconds('ten-point', 5400)">Next Loop 10 Point</button>
+                <label for="ten-point-seconds">Seconds to Add</label>
+                <input type="number" id="ten-point-seconds" name="ten-point-seconds" placeholder="Default: 6000">
+                <button onclick="addSeconds('ten-point', document.getElementById('ten-point-seconds').value, 5400)">Next Loop 10 Point</button>
             </div>
         </div>
         <div class="history-columns">
