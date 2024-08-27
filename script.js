@@ -1,5 +1,6 @@
 function addSeconds(inputId, userSecondsToAdd, defaultSecondsToAdd) {
     const input = document.getElementById(inputId);
+    const secondsInput = document.getElementById(`${inputId}-seconds`);
     let currentTime = input.value;
 
     // ถ้า userSecondsToAdd ไม่ได้ระบุ ให้ใช้ค่า default
@@ -21,6 +22,10 @@ function addSeconds(inputId, userSecondsToAdd, defaultSecondsToAdd) {
 
     input.value = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
     saveHistory(inputId, input.value);
+
+    // ล้างช่องเวลาและช่อง secondsToAdd
+    input.value = '';
+    secondsInput.value = '';
 }
 
 function saveHistory(inputId, newTime) {
