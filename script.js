@@ -61,7 +61,7 @@ function loadDefaultTimes() {
         { activity: "Electrical Repair", time: "07:30 PM" },
         { activity: "Airdrop", time: "09:00 PM" },
         { activity: "Capture Flag", time: "10:30 PM" },
-        { activity: "Electrical Repair", time: "11:30 PM" }
+        { activity: "Electrical Repair", time: "11:00 PM" }
     ];
 }
 
